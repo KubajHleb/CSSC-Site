@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Совет Самоуправления Старост</title>
+<style>
+
+  :root{
+    --blue:#16324f; --blue2:#0f2338; --gold:#d4a94e; --gold2:#f0d9a8;
+    --bg:#f4f6f9; --card:#ffffff; --text:#1d2733; --muted:#5b6b7c;
+    --radius:16px; --shadow:0 10px 30px rgba(15,35,56,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding-top:76px}
+  a{text-decoration:none;color:inherit}
+  button{font-family:inherit;cursor:pointer}
+
+  /* ===== ВЕРХНЕЕ МЕНЮ (постоянное) ===== */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;height:76px;
+    background:rgba(15,35,56,.96);backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 28px;box-shadow:0 4px 20px rgba(0,0,0,.25);
+  }
+  nav{display:flex;gap:6px;align-items:center}
+  nav a{
+    color:#e8eef5;padding:10px 16px;border-radius:10px;font-size:15px;
+    transition:background .2s,color .2s;white-space:nowrap;
+  }
+  nav a:hover{background:rgba(255,255,255,.1)}
+  nav a.active{background:var(--gold);color:var(--blue2);font-weight:600}
+  .brand{display:flex;align-items:center;gap:14px;margin-left:auto}
+  .brand-title{color:#fff;font-weight:700;font-size:17px;letter-spacing:.4px;text-align:right;line-height:1.25}
+  .brand-title small{display:block;font-weight:400;font-size:12px;color:var(--gold2)}
+  .logo-img{
+    width:52px;height:52px;flex:0 0 52px;border-radius:50%;object-fit:cover;
+    box-shadow:0 0 0 3px rgba(255,255,255,.15);background:#fff;
+  }
+  .burger{display:none;background:none;border:none;color:#fff;font-size:26px}
+  @media (max-width:960px){
+    .burger{display:block}
+    nav{
+      position:fixed;top:76px;left:0;right:0;background:var(--blue2);
+      flex-direction:column;align-items:stretch;padding:10px;
+      display:none;box-shadow:0 20px 30px rgba(0,0,0,.3);
+    }
+    nav.open{display:flex}
+    .brand-title{display:none}
+  }
+
+  .page{display:none;min-height:calc(100vh - 76px)}
+  .page.active{display:block;animation:pageIn .38s cubic-bezier(.2,.7,.3,1) both}
+  .page{transition:opacity .28s ease,transform .28s ease}
+  .page.leaving{opacity:0;transform:translateY(12px)}
+  @keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  nav a{position:relative;transition:background .2s,color .2s}
+  nav a:not(.active)::after{
+    content:"";position:absolute;left:16px;right:16px;bottom:6px;height:2px;
+    background:var(--gold);border-radius:2px;transform:scaleX(0);
+    transform-origin:left;transition:transform .25s ease;
+  }
+  nav a:not(.active):hover::after{transform:scaleX(1)}
+
+  /* ===== СЛАЙДЕР ===== */
+  .slider{position:relative;height:min(62vh,560px);min-height:380px;overflow:hidden}
+  .slide{
+    position:absolute;inset:0;opacity:0;transform:scale(1.04);
+    transition:opacity .8s ease,transform .8s ease;
+    background-size:cover;background-position:center;
+  }
+  .slide.current{opacity:1;transform:scale(1)}
+  .slide::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(105deg,rgba(10,25,42,.78) 0%,rgba(10,25,42,.35) 45%,rgba(10,25,42,0) 75%)}
+  .slide-text{
+    position:absolute;left:5%;bottom:8%;z-index:2;max-width:560px;color:#fff;
+    opacity:0;transform:translateY(24px);transition:opacity .6s .3s,transform .6s .3s;
+  }
+  .slide.current .slide-text{opacity:1;transform:translateY(0)}
+  .slide-text .tag{
+    display:inline-block;background:var(--gold);color:var(--blue2);
+    font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+    padding:5px 12px;border-radius:20px;margin-bottom:12px;
+  }
+  .slide-text h2{font-size:clamp(24px,4vw,42px);margin-bottom:10px;line-height:1.15}
+  .slide-text p{font-size:16px;color:#dbe5ef;line-height:1.5}
+  .slider-btn{
+    position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+    width:48px;height:48px;border-radius:50%;border:none;
+    background:rgba(255,255,255,.15);color:#fff;font-size:22px;
+    backdrop-filter:blur(4px);transition:background .2s;
+  }
+  .slider-btn:hover{background:rgba(255,255,255,.35)}
+  .prev{left:18px}.next{right:18px}
+  .dots{position:absolute;bottom:16px;right:24px;z-index:3;display:flex;gap:8px}
+  .dots button{width:10px;height:10px;border-radius:50%;border:none;background:rgba(255,255,255,.4);transition:.2s}
+  .dots button.on{background:var(--gold);width:26px;border-radius:6px}
+
+  /* ===== БЛОК СОБЫТИЙ (сворачиваемый) ===== */
+  .section{max-width:1200px;margin:0 auto;padding:48px 24px 64px}
+  .section-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:26px}
+  .section-head h3{font-size:26px;color:var(--blue)}
+  .section-head h3::before{content:"";display:inline-block;width:6px;height:26px;background:var(--gold);border-radius:3px;margin-right:12px;vertical-align:-4px}
+  .toggle-btn{
+    background:var(--blue);color:#fff;border:none;border-radius:12px;
+    padding:11px 22px;font-size:15px;font-weight:600;transition:.2s;
+  }
+  .toggle-btn:hover{background:var(--gold);color:var(--blue2)}
+  .events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+  .events-grid.collapsed .event-card:nth-child(n+4){display:none}
+  .event-card{
+    background:var(--card);border-radius:var(--radius);overflow:hidden;
+    box-shadow:var(--shadow);transition:transform .25s;display:flex;flex-direction:column;
+  }
+  .event-card:hover{transform:translateY(-6px)}
+  .event-img{height:200px;background-size:cover;background-position:center;position:relative}
+  .event-img .date-badge{
+    position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.95);
+    border-radius:10px;padding:6px 12px;text-align:center;line-height:1.1;
+    box-shadow:0 4px 12px rgba(0,0,0,.2);
+  }
+  .date-badge b{display:block;font-size:20px;color:var(--blue)}
+  .date-badge span{font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .event-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .event-body h4{font-size:18px;color:var(--blue)}
+  .event-body p{font-size:14px;color:var(--muted);line-height:1.55;flex:1}
+  .event-body .place{font-size:13px;color:var(--gold);font-weight:700}
+  .event-type-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;
+    width:fit-content;margin-top:4px;
+  }
+  .event-type-badge svg{width:13px;height:13px;flex:0 0 13px}
+  .done-badge{
+    position:absolute;top:12px;right:12px;background:var(--gold);color:var(--blue2);
+    font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+    padding:5px 12px;border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,.2);
+  }
+
+  /* ===== КАЛЕНДАРЬ: КВАДРАТНАЯ СЕТКА + БЛИЖАЙШИЕ СОБЫТИЯ ===== */
+  .cal-layout{display:flex;gap:44px;align-items:flex-start;justify-content:center;max-width:1200px;margin:0 auto}
+  .cal-wrap{
+    flex:1;min-width:0;max-width:560px;background:var(--card);
+    border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;
+  }
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .cal-head h3{color:var(--blue);font-size:19px;font-weight:700;text-transform:capitalize}
+  .cal-head button{
+    width:38px;height:38px;border-radius:9px;background:#fff;color:var(--blue);
+    border:1px solid #e2ddd0;font-size:18px;transition:border-color .2s,color .2s;
+  }
+  .cal-head button:hover{border-color:var(--gold);color:var(--gold)}
+  .cal-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:1px;
+    background:#e8e4d6;border:1px solid #e8e4d6;border-radius:12px;overflow:hidden;
+  }
+  .cal-grid .dow{
+    text-align:center;font-size:10px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:1px;padding:8px 0;background:#fff;
+  }
+  .day{
+    aspect-ratio:1/1;min-height:0;background:#fff;padding:5px;
+    display:flex;flex-direction:column;transition:background .15s;
+  }
+  .day.empty{background:#fbfaf6;cursor:default}
+  .day-num{
+    align-self:flex-start;width:24px;height:24px;flex:0 0 24px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:600;color:var(--text);border-radius:50%;
+  }
+  .day-dots{display:flex;gap:4px;justify-content:center;margin-top:auto;padding-bottom:4px}
+  .day-dot{width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center}.day-dot svg{width:16px;height:16px}
+  .day.has-event{cursor:pointer}
+  .day.has-event:hover{background:#f8f2e3}
+  .day.selected{background:var(--gold)!important}
+  .day.selected .day-num{color:var(--blue2)}
+  .day.today .day-num{background:var(--blue);color:#fff}
+
+  .upcoming{width:360px;flex:0 0 360px;position:sticky;top:100px;align-self:flex-start}
+  .upcoming h3{font-size:20px;color:var(--blue);margin-bottom:4px;transition:opacity .2s}
+  .up-item{padding:16px 0;border-top:1px solid #e6e1d3}
+  .up-item:first-child{border-top:none}
+  .up-type{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:7px}
+  .up-dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px}
+  .up-title{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+    width:100%;background:none;border:none;text-align:left;cursor:pointer;
+    font-size:16px;font-weight:700;color:var(--blue);line-height:1.35;margin-bottom:7px;
+    padding:0;transition:color .2s;
+  }
+  .up-title:hover{color:var(--gold)}
+  .up-chev{
+    flex:0 0 auto;font-size:13px;color:var(--gold);margin-top:3px;
+    transition:transform .3s ease;
+  }
+  .up-item.open .up-chev{transform:rotate(180deg)}
+  .up-desc{font-size:14px;color:var(--muted);line-height:1.55}
+  .up-long{
+    display:none;font-size:14px;color:var(--muted);line-height:1.6;
+    padding-top:10px;margin-top:10px;border-top:1px dashed #e0dac9;
+  }
+  .up-item.open .up-long{display:block;animation:pageIn .3s ease both}
+  .up-empty{font-size:14px;color:var(--muted);padding:18px 0;line-height:1.5}
+  @media (max-width:900px){
+    .cal-layout{flex-direction:column}
+    .cal-wrap{max-width:none}
+    .upcoming{width:100%;flex:none;position:static}
+  }
+
+  /* ===== СОСТАВ ===== */
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:24px}
+  .team-subsection{margin-bottom:44px}
+  .team-subsection:last-child{margin-bottom:0}
+  .sub-title{font-size:20px;color:var(--blue);margin-bottom:18px;padding-left:14px;border-left:5px solid var(--gold);font-weight:700}
+  .member-card{
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    overflow:hidden;text-align:center;transition:transform .25s;cursor:pointer;
+  }
+  .member-card:hover{transform:translateY(-6px)}
+  .member-photo{
+    height:190px;background-size:cover;background-position:center center;
+    display:flex;align-items:center;justify-content:center;
+    font-size:52px;font-weight:700;color:rgba(255,255,255,.9);
+  }
+  .member-info{padding:16px 14px 20px}
+  .member-info h4{font-size:17px;color:var(--blue);margin-bottom:4px}
+  .member-info .role{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px}
+  .member-info .grp{font-size:13px;color:var(--muted)}
+
+  /* ===== ВСПЛЫВАЮЩЕЕ ОКНО КОНТАКТОВ ===== */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(10,20,32,.55);backdrop-filter:blur(3px);
+    z-index:200;display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-overlay.open{display:flex}
+  .member-modal{
+    background:#fff;border-radius:20px;max-width:430px;width:100%;overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,.35);position:relative;
+    animation:popIn .28s cubic-bezier(.2,.9,.3,1.2);
+  }
+  @keyframes popIn{from{opacity:0;transform:translateY(36px) scale(.95)}to{opacity:1;transform:none}}
+  .member-modal .m-photo{
+    height:210px;background-size:cover;background-position:center;
+    display:flex;align-items:center;justify-content:center;
+    font-size:56px;font-weight:700;color:rgba(255,255,255,.92);
+  }
+  .member-modal .m-body{padding:22px 26px 26px}
+  .member-modal h4{font-size:20px;color:var(--blue);margin-bottom:3px}
+  .member-modal .m-role{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:16px}
+  .contact-row{
+    display:flex;align-items:center;gap:13px;background:#f4f6f9;
+    border-radius:12px;padding:12px 15px;margin-bottom:10px;transition:background .15s;
+  }
+  .contact-row:hover{background:#ece5d2}
+  .contact-row .c-icon{
+    width:38px;height:38px;flex:0 0 38px;border-radius:10px;
+    background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;
+  }
+  .contact-row .c-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700}
+  .contact-row .c-value{font-size:15px;color:var(--blue);font-weight:600;word-break:break-all}
+  .member-modal .close-x{
+    position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;
+    border:none;background:rgba(255,255,255,.9);color:var(--muted);font-size:18px;line-height:1;
+    box-shadow:0 4px 12px rgba(0,0,0,.2);
+  }
+  .member-modal .close-x:hover{background:var(--gold);color:var(--blue2)}
+
+  /* ===== ПОЛОЖЕНИЯ: АККОРДЕОН ДОКУМЕНТОВ ===== */
+  .doc-acc{max-width:920px;margin:0 auto;display:flex;flex-direction:column}
+  .doc-acc-item{border-bottom:1px solid #e6e1d3}
+  .doc-acc-item:first-child{border-top:1px solid #e6e1d3}
+  .doc-acc-head{
+    display:flex;align-items:baseline;gap:24px;width:100%;
+    background:none;border:none;text-align:left;
+    padding:26px 8px;transition:padding-left .25s ease;
+  }
+  .doc-acc-head:hover{padding-left:18px}
+  .doc-num{
+    font-size:14px;font-weight:800;color:var(--gold);
+    letter-spacing:1.5px;flex:0 0 34px;
+  }
+  .doc-name{
+    flex:1;min-width:0;font-size:clamp(17px,2.1vw,22px);font-weight:700;
+    color:var(--blue);line-height:1.3;transition:color .2s;
+  }
+  .doc-acc-head:hover .doc-name{color:var(--gold)}
+  .doc-date{
+    flex:0 0 auto;font-size:13px;color:var(--muted);
+    display:flex;align-items:center;gap:12px;white-space:nowrap;
+  }
+  .doc-sign{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:28px;height:28px;border-radius:50%;
+    border:1.5px solid var(--gold);color:var(--gold);
+    font-size:18px;font-weight:400;line-height:1;
+    transition:transform .3s ease,background .2s,color .2s;
+  }
+  .doc-acc-item.open .doc-sign{transform:rotate(45deg);background:var(--gold);color:#fff}
+  .doc-acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .doc-acc-inner{padding:2px 8px 30px 66px}
+  .doc-acc-inner p{
+    font-size:15px;color:var(--muted);line-height:1.65;
+    max-width:640px;margin-bottom:16px;
+  }
+  .doc-open{
+    display:inline-block;font-size:14px;font-weight:700;color:var(--blue);
+    border-bottom:2px solid var(--gold);padding-bottom:2px;
+    transition:color .2s,border-color .2s;
+  }
+  .doc-open:hover{color:var(--gold);border-color:var(--blue)}
+  @media (max-width:640px){
+    .doc-acc-head{flex-wrap:wrap;gap:10px 16px}
+    .doc-date{width:100%;justify-content:flex-end}
+    .doc-acc-inner{padding-left:42px}
+  }
+
+  footer{background:var(--blue2);color:#aebfd0;text-align:center;padding:22px;font-size:13px;margin-top:40px}
+
+
+
+  /* Мобильная оптимизация!! */
+
+/* ===== МОБИЛЬНАЯ ОПТИМИЗАЦИЯ (смартфоны) ===== */
+@media (max-width: 900px) {
+
+  /* ===== 1. СЛАЙДЕР: меньше по высоте, кнопки выше ===== */
+  .slider {
+    height: min(42vh, 360px) !important;
+    min-height: 260px !important;
+  }
+  .slider-btn {
+    top: 32% !important;          /* поднимаем кнопки выше центра */
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 18px !important;
+  }
+  .slide-text {
+    left: 20px !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    max-width: 100% !important;
+  }
+  .slide-text h2 { font-size: 22px !important; }
+  .slide-text p  { font-size: 14px !important; }
+  .dots { right: 16px !important; bottom: 12px !important; }
+
+  /* ===== 2. КАЛЕНДАРЬ: крупнее и по центру ===== */
+  .cal-layout {
+    justify-content: center !important;
+  }
+  .cal-wrap {
+    max-width: 400px !important;   /* фиксируем ширину */
+    width: 100% !important;
+    margin: 0 auto !important;     /* центрируем */
+    padding: 18px !important;
+  }
+  .cal-head h3 { font-size: 18px !important; }
+  .cal-head button {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  /* Увеличиваем ячейки и иконки внутри */
+  .day { padding: 6px !important; }
+  .day-num {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 14px !important;
+  }
+  .day-dot svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .day-dots { gap: 5px !important; }
+
+  /* Боковая панель событий под календарём */
+  .upcoming {
+    max-width: 400px !important;
+    width: 100% !important;
+    margin: 24px auto 0 !important;
+    position: static !important;
+  }
+
+  /* ===== 3. СЕТКИ: 2 события, 3 члена совета ===== */
+  .events-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* ===== 4. ЛОГОТИП: круглый ===== */
+  .logo-img {
+    width: 46px !important;
+    height: 46px !important;
+    flex: 0 0 46px !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+  }
+
+  /* ===== 5. Компактные отступы и шрифты ===== */
+  .section { padding: 24px 14px 40px !important; }
+  .section-head h3 { font-size: 20px !important; }
+  .section-head h3::before { width: 4px !important; height: 20px !important; }
+
+  .event-img { height: 140px !important; }
+  .event-body { padding: 12px 14px 14px !important; gap: 6px !important; }
+  .event-body h4 { font-size: 15px !important; }
+  .event-body p { font-size: 12.5px !important; }
+
+  .member-photo { height: 120px !important; font-size: 32px !important; }
+  .member-info { padding: 10px 8px 12px !important; }
+  .member-info h4 { font-size: 13.5px !important; line-height: 1.25 !important; }
+  .member-info .role { font-size: 11px !important; }
+  .member-info .grp { font-size: 11px !important; }
+
+  header { padding: 0 14px !important; }
+  .brand { gap: 10px !important; }
+  .brand-title { font-size: 14px !important; }
+  .brand-title small { font-size: 11px !important; }
+}
+
+/* Мобильная оптимизация!! */
+
+</style>
+<base target="_blank">
+<base target="_blank">
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+
+<!-- ======= ВЕРХНЕЕ МЕНЮ ======= -->
+<header>
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+  <nav id="nav"></nav>
+  <div class="brand">
+    <div class="brand-title">
+      Совет Самоуправления Старост
+      <small>представительный орган студенческого самоуправления</small>
+    </div>
+    <!-- ЛОГОТИП: положите файл logo.png рядом с этим HTML-файлом -->
+    <img class="logo-img" src="img/logo.webp" alt="Логотип Совета Самоуправления Старост">
+  </div>
+</header>
+
+<!-- ======= СТРАНИЦА: ГЛАВНАЯ ======= -->
+<main class="page" id="page-home">
+  <div class="slider" id="slider">
+    <button class="slider-btn prev" id="prev">‹</button>
+    <button class="slider-btn next" id="next">›</button>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <section class="section">
+    <div class="section-head">
+      <h3>Ближайшие события</h3>
+      <button class="toggle-btn" id="toggle-events">Показать все события</button>
+    </div>
+    <div class="events-grid collapsed" id="events-grid"></div>
+  </section>
+</main>
+
+<!-- ======= СТРАНИЦА: КАЛЕНДАРЬ ======= -->
+<main class="page" id="page-calendar">
+  <section class="section">
+    <div class="cal-layout">
+      <div class="cal-wrap">
+        <div class="cal-head">
+          <button id="cal-prev">‹</button>
+          <h3 id="cal-title"></h3>
+          <button id="cal-next">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+      <aside class="upcoming">
+        <h3 id="upcoming-title">Ближайшие события</h3>
+        <div id="upcoming-list"></div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<!-- ======= СТРАНИЦА: СОСТАВ ======= -->
+<main class="page" id="page-team">
+  <section class="section">
+    <div class="section-head"><h3>Состав Совета</h3></div>
+
+    <div class="team-subsection">
+      <h4 class="sub-title">Руководство</h4>
+      <div class="team-grid" id="team-leaders"></div>
+    </div>
+
+    <div class="team-subsection">
+      <h4 class="sub-title">Участники</h4>
+      <div class="team-grid" id="team-members"></div>
+    </div>
+
+    <div class="team-subsection">
+      <h4 class="sub-title">Администрация сайта</h4>
+      <div class="team-grid" id="team-admins"></div>
+    </div>
+  </section>
+</main>
+
+<!-- ======= СТРАНИЦА: ИТОГИ ======= -->
+<main class="page" id="page-results">
+  <section class="section">
+    <div class="section-head"><h3>Итоги прошедших мероприятий</h3></div>
+    <div class="events-grid" id="results-grid"></div>
+  </section>
+</main>
+
+<!-- ======= СТРАНИЦА: ПОЛОЖЕНИЕ ======= -->
+<main class="page" id="page-charter">
+  <section class="section">
+    <div class="section-head"><h3>Положения и регламенты</h3></div>
+    <div class="doc-acc" id="doc-list"></div>
+  </section>
+</main>
+
+<!-- ======= ВСПЛЫВАЮЩЕЕ ОКНО КОНТАКТОВ ======= -->
+<div class="modal-overlay" id="member-overlay">
+  <div class="member-modal" id="member-modal" role="dialog" aria-modal="true">
+    <button class="close-x" id="member-close" aria-label="Закрыть">✕</button>
+    <div class="m-photo" id="m-photo"></div>
+    <div class="m-body">
+      <h4 id="m-name"></h4>
+      <div class="m-role" id="m-role"></div>
+      <div id="m-contacts"></div>
+    </div>
+  </div>
+</div>
+
+<footer>© Совет Самоуправления Старост · сайт создан для информирования студентов</footer>
+
+<script>
+/* =========================================================
+   НАСТРОЙКА САЙТА: правится всё в блоках ниже
+   ========================================================= */
+
+/* 1) СТРАНИЦЫ меню */
+const PAGES = [
+  { id: "home",     title: "Главная"   },
+  { id: "calendar", title: "Календарь" },
+  { id: "team",     title: "Состав"    },
+  { id: "results",  title: "Итоги"     },
+  { id: "charter",  title: "Положения" },
+];
+
+/* ---------- ТИПЫ МЕРОПРИЯТИЙ (SVG можно менять ниже) ---------- */
+const EVENT_TYPES = {
+  meeting:  {
+    label: "Собрание",
+    // ИСПРАВЛЕНО: здесь теперь настоящие векторные координаты (атрибут d)
+    svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z"/></svg>',
+    color: "#2a5a86", bg: "#e8f0f8", border: "#2a5a86"
+  },
+  event:    {
+    label: "Мероприятие",
+    svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M14.53 1.45L13.45 2.53L15.05 4.13C15.27 4.38 15.38 4.67 15.38 5S15.27 5.64 15.05 5.86L11.5 9.47L12.5 10.55L16.13 6.94C16.66 6.35 16.92 5.7 16.92 5C16.92 4.3 16.66 3.64 16.13 3.05L14.53 1.45M10.55 3.47L9.47 4.55L10.08 5.11C10.3 5.33 10.41 5.63 10.41 6S10.3 6.67 10.08 6.89L9.47 7.45L10.55 8.53L11.11 7.92C11.64 7.33 11.91 6.69 11.91 6C11.91 5.28 11.64 4.63 11.11 4.03L10.55 3.47M21 5.06C20.31 5.06 19.67 5.33 19.08 5.86L13.45 11.5L14.53 12.5L20.11 6.94C20.36 6.69 20.66 6.56 21 6.56S21.64 6.69 21.89 6.94L22.5 7.55L23.53 6.47L22.97 5.86C22.38 5.33 21.72 5.06 21 5.06M7 8L2 22L16 17L7 8M19 11.06C18.3 11.06 17.66 11.33 17.06 11.86L15.47 13.45L16.55 14.53L18.14 12.94C18.39 12.69 18.67 12.56 19 12.56C19.33 12.56 19.63 12.69 19.88 12.94L21.5 14.53L22.55 13.5L20.95 11.86C20.36 11.33 19.7 11.06 19 11.06Z"/></svg>',
+    color: "#b8860b", bg: "#fdf3dd", border: "#d4a94e"
+  },
+  deadline: {
+    label: "Дедлайн",
+    svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M4 2V8H2V2H4M2 22V16H4V22H2M5 12C5 13.11 4.11 14 3 14C1.9 14 1 13.11 1 12C1 10.9 1.9 10 3 10C4.11 10 5 10.9 5 12M16 4C20.42 4 24 7.58 24 12C24 16.42 20.42 20 16 20C12.4 20 9.36 17.62 8.35 14.35L6 12L8.35 9.65C9.36 6.38 12.4 4 16 4M15 13L19.53 15.79L20.33 14.5L16.5 12.2V7H15V13Z"/></svg>',
+    color: "#c4465e", bg: "#fde8ec", border: "#c4465e"
+  },
+};
+
+/* 2) СЛАЙДЕР: bg — любой CSS-фон: url("img.jpg") center/cover или градиент */
+const SLIDES = [
+  {
+    bg: 'url("img/banner 1.webp") center/cover',
+    tag: "Новости",
+    title: "Совет Самоуправления Старост",
+    text: "Мы — голос студентов. Представляем интересы каждой группы и делаем студенческую жизнь ярче."
+  },
+  {
+    bg: 'url("img/banner 2.webp") center/cover',
+    tag: "События",
+    title: "Неделя старост — сентябрь 2026",
+    text: "Встречи, мастер-классы и командные игры. Расписание — в разделе «Календарь»."
+  },
+  {
+    bg: 'url("img/banner 3.webp") center/cover',
+    tag: "Проекты",
+    title: "Помощь первокурсникам",
+    text: "Наставники из числа старост помогают первокурсникам быстро освоиться в учебной организации."
+  }
+];
+
+/* 3) СОБЫТИЯ (будущие). date "ГГГГ-ММ-ДД". long — подробности для окошка в календаре. */
+const EVENTS = [
+  {
+    title: "Общее собрание старост курса",
+    desc: "Обсуждаем план работы на семестр, выборы актива и текущие вопросы по группам.",
+    long: "Открываем семестр: утверждаем план работы Совета, проводим выборы ответственных за направления и разбираем текущие вопросы по группам. Присутствие всех старост обязательно. После официальной части — неформальное общение.",
+    date: "2026-09-10", place: "Актовый зал",
+    bg: "linear-gradient(135deg,#16324f,#2a5a86)",
+    type: "meeting"
+  },
+  {
+    title: "Сдача отчётов по посещаемости",
+    desc: "Последний день подачи сводных ведомостей за первые две недели семестра.",
+    long: "Старостам необходимо сдать сводные ведомости посещаемости за первые две недели семестра. Форма отчёта — в общем чате Совета. Просьба не откладывать: после дедлайна данные передаются в деканат.",
+    date: "2026-09-15", place: "Кабинет 212",
+    bg: "linear-gradient(135deg,#7a2334,#c4465e)",
+    type: "deadline"
+  },
+  {
+    title: "Осенний субботник",
+    desc: "Уборка территории кампуса и прилегающего парка, сбор в 10:00 у главного входа.",
+    long: "Приводим территорию в порядок перед учебным сезоном: сбор мусора, уборка клумб и парковой зоны. Инвентарь выдаётся на месте. Активным участникам — благодарности. Сбор в 10:00 у главного входа.",
+    date: "2026-09-20", place: "Территория кампуса",
+    bg: "linear-gradient(135deg,#1d5c4a,#3aa08a)",
+    type: "event"
+  },
+  {
+    title: "День донора",
+    desc: "Выездная станция переливания крови работает в актовом зале с 9:00 до 14:00.",
+    long: "В актовом зале развёрнута выездная станция переливания крови. Перед сдачей — небольшой завтрак и консультация врача. Запись у координатора направления. Каждый донор получает сертификат и комплимент.",
+    date: "2026-09-25", place: "Актовый зал",
+    bg: "linear-gradient(135deg,#6b4e8f,#9b7ec4)",
+    type: "event"
+  }
+];
+
+/* 4) ИТОГИ прошедших мероприятий.
+      bg — картинка: url("photos/itogi1.jpg") center/cover или градиент-заглушка.
+      result — текст с итогами под описанием. */
+const RESULTS = [
+  {
+    title: "Турнир «Битва старост»",
+    desc: "Спортивный турнир между командами старост: волейбол, эстафеты, перетягивание каната.",
+    result: "Участвовало 14 команд от групп. Победу одержала команда группы 204. Все участники получили грамоты, победители — кубок и памятные призы. Решено сделать турнир ежегодным.",
+    date: "2026-05-20", place: "Спортивный зал",
+    bg: "linear-gradient(135deg,#1d5c4a,#3aa08a)"
+  },
+  {
+    title: "Субботник «Чистая территория»",
+    desc: "Общегородской субботник с уборкой территории и высадкой кустарников.",
+    result: "В работах приняли участие 96 человек. Собрано 40 мешков мусора, высажено 25 кустов сирени и спирей. Группа 301 получила благодарность администрации за самую организованную бригаду.",
+    date: "2026-04-18", place: "Территория и парк",
+    bg: "linear-gradient(135deg,#16324f,#2a5a86)"
+  },
+  {
+    title: "Концерт ко Дню Победы",
+    desc: "Праздничный концерт с участием творческих коллективов и чтением писем с фронта.",
+    result: "Концерт посетило более 300 зрителей. Выступили 8 коллективов, открылась выставка «Письма с фронта». Собранные средства от благотворительной ярмарки на входе переданы ветеранам.",
+    date: "2026-05-09", place: "Актовый зал",
+    bg: "linear-gradient(135deg,#7a2334,#c4465e)"
+  },
+  {
+    title: "Ярмарка идей проектов",
+    desc: "Презентация студенческих проектов с голосованием за лучшую инициативу.",
+    result: "Представлено 12 проектов. По итогам голосования финансирование получили три идеи: «Студенческая кофейня», «Буккроссинг в коридорах» и «Экологичный кампус». Команды приступают к реализации.",
+    date: "2026-03-14", place: "Конференц-зал",
+    bg: "linear-gradient(135deg,#6b4e8f,#9b7ec4)"
+  }
+];
+
+/* 5) СОСТАВ Совета: contacts — почта, телефон, Telegram (ник без @).
+      photo — путь к фото, например "photos/ivanova.jpg"; пока пусто — заглушка с инициалами. */
+
+/* Руководство */
+const LEADERS = [
+  { name: "Быркова Арина", role: "Председатель Совета Старост", group: "группа: ТМ-44", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "img/avatars/byrkova.webp",
+    contacts: { email: "ivanova@example.ru", phone: "+7 (900) 123-45-67", tg: "ivanova_sss" } },
+    { name: "Тихиня Егор", role: "Заместитель Председателя<br> Совета Старост", group: "группа: ТМ-44", bg: "linear-gradient(135deg,#1d5c4a,#3aa08a)", photo: "",
+    contacts: { email: "petrov@example.ru", phone: "+7 (900) 234-56-78", tg: "petrov_sss" } },
+    { name: "Железко Егор", role: "Секретарь Совета Старост", group: "группа: ТМ-44", bg: "linear-gradient(135deg,#1d5c4a,#3aa08a)", photo: "img/avatars/jelezko.webp",
+    contacts: { email: "petrov@example.ru", phone: "+7 (900) 234-56-78", tg: "petrov_sss" } },
+];
+
+/* Участники — все старосты */
+const MEMBERS_ALL = [
+  { name: "Смирнова Мария", role: "Секретарь", group: "группа 105", bg: "linear-gradient(135deg,#6b4e8f,#9b7ec4)", photo: "",
+    contacts: { email: "smirnova@example.ru", phone: "+7 (900) 345-67-89", tg: "smirnova_sss" } },
+  { name: "Козлов Артём", role: "Ответственный за спорт", group: "группа 302", bg: "linear-gradient(135deg,#a3542f,#d98a52)", photo: "",
+    contacts: { email: "kozlov@example.ru", phone: "+7 (900) 456-78-90", tg: "kozlov_sss" } },
+  { name: "Фёдорова София", role: "Ответственная за культуру", group: "группа 203", bg: "linear-gradient(135deg,#2e4a6b,#5a86b3)", photo: "",
+    contacts: { email: "fedorova@example.ru", phone: "+7 (900) 567-89-01", tg: "fedorova_sss" } },
+  { name: "Волков Никита", role: "Ответственный за СМИ", group: "группа 402", bg: "linear-gradient(135deg,#7a2334,#c4465e)", photo: "",
+    contacts: { email: "volkov@example.ru", phone: "+7 (900) 678-90-12", tg: "volkov_sss" } },
+];
+
+/* Администрация сайта — добавьте сюда людей */
+const ADMINS = [
+  /* Пример:
+  { name: "Имя Фамилия", role: "Администратор сайта", group: "группа 101", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: "admin@example.ru", phone: "+7 (900) 000-00-00", tg: "admin_sss" } },
+  */
+
+  { name: "Кубай Глеб Юрьевич", role: "Глав. Администратор", group: "МО-34", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "img/avatars/kybai.webp",
+    contacts: { email: "admin@example.ru", phone: "+7 (900) 000-00-00", tg: "admin_sss" } },
+
+];
+
+
+
+
+
+
+
+/* 6) ДОКУМЕНТЫ раздела «Положение»: файлы в папке docs рядом с сайтом. */
+const DOCUMENTS = [
+  { title: "Положение о Совете Старост",
+    file: "docs/Положение-о-Совете-старост.pdf",
+    updated: "От 5 Июня 2023",
+    desc: "Настоящее Положение регламентирует статус совета старост учебных групп, порядок работы, его структуру и порядок формирования." },
+  { title: "Положение о Старосте учебной группы",
+    file: "docs/Положение_о_старосте_учебной_группы.pdf",
+    updated: "От 5 Июня 2023",
+    desc: "Настоящее Положение регламентирует статус старост учебных групп, порядок их назначения и освобождения от занимаемой должности, их права и обязанности." }
+];
+
+
+
+
+
+
+
+
+/* ========== ДАЛЕЕ — ЛОГИКА (обычно не требует правок) ========== */
+
+/* --- Переключение страниц и меню --- */
+const nav = document.getElementById("nav");
+PAGES.forEach((p, i) => {
+  const a = document.createElement("a");
+  a.textContent = p.title;
+  a.href = "#" + p.id;
+  a.onclick = (e) => { 
+    e.preventDefault();           // ← отменяем стандартный переход
+    showPage(p.id); 
+    nav.classList.remove("open"); 
+    history.pushState(null, "", "#" + p.id);  // ← адресная строка обновляется правильно
+  };
+  a.dataset.page = p.id;
+  if (i === 0) a.classList.add("active");
+  nav.appendChild(a);
+});
+document.getElementById("burger").onclick = () => nav.classList.toggle("open");
+
+let pageTimer = null;
+function showPage(id) {
+  const next = document.getElementById("page-" + id);
+  const current = document.querySelector(".page.active");
+  if (!next || next === current) return;
+  document.querySelectorAll("nav a").forEach(a =>
+    a.classList.toggle("active", a.dataset.page === id));
+  // если предыдущая анимация ещё идёт — завершаем её мгновенно
+  if (pageTimer) {
+    clearTimeout(pageTimer); pageTimer = null;
+    document.querySelectorAll(".page.leaving")
+      .forEach(el => el.classList.remove("active", "leaving"));
+  }
+  if (!current) { next.classList.add("active"); window.scrollTo(0, 0); return; }
+  current.classList.add("leaving");
+  pageTimer = setTimeout(() => {
+    current.classList.remove("active", "leaving");
+    next.classList.add("active");
+    window.scrollTo(0, 0);
+    pageTimer = null;
+  }, 280);
+}
+const startPage = location.hash.replace("#", "");
+showPage(PAGES.some(p => p.id === startPage) ? startPage : PAGES[0].id);
+
+/* --- Слайдер --- */
+const slider = document.getElementById("slider");
+const dotsBox = document.getElementById("dots");
+SLIDES.forEach((s, i) => {
+  const d = document.createElement("div");
+  d.className = "slide";
+  d.style.background = s.bg;
+  d.innerHTML = `<div class="slide-text"><span class="tag">${s.tag}</span><h2>${s.title}</h2><p>${s.text}</p></div>`;
+  slider.insertBefore(d, slider.firstChild.nextSibling);
+  const dot = document.createElement("button");
+  dot.onclick = () => goSlide(i);
+  dotsBox.appendChild(dot);
+});
+const slides = slider.querySelectorAll(".slide");
+const dots = dotsBox.querySelectorAll("button");
+let cur = 0, timer;
+function goSlide(i) {
+  cur = (i + slides.length) % slides.length;
+  slides.forEach((s, k) => s.classList.toggle("current", k === cur));
+  dots.forEach((d, k) => d.classList.toggle("on", k === cur));
+  clearInterval(timer); timer = setInterval(() => goSlide(cur + 1), 5000);
+}
+document.getElementById("prev").onclick = () => goSlide(cur - 1);
+document.getElementById("next").onclick = () => goSlide(cur + 1);
+goSlide(0);
+
+
+
+
+
+
+
+
+
+
+
+/* --- События: карточки + сворачиваемый блок --- */
+const grid = document.getElementById("events-grid");
+const MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+const MONTHS_CAP = ["Января","Февраля","Марта","Апреля","Мая","Июня","Июля","Августа","Сентября","Октября","Ноября","Декабря"];
+function typeBadge(type) {
+  const t = EVENT_TYPES[type] || EVENT_TYPES.event;
+  return `<span class="event-type-badge" style="background:${t.bg};color:${t.color};border:1px solid ${t.border}">${t.svg} ${t.label}</span>`;
+}
+
+EVENTS.forEach(ev => {
+  const [y, m, d] = ev.date.split("-").map(Number);
+  const card = document.createElement("div");
+  card.className = "event-card";
+  card.innerHTML = `
+    <div class="event-img" style="background:${ev.bg}">
+      <div class="date-badge"><b>${d}</b><span>${MONTHS[m-1]}</span></div>
+    </div>
+    <div class="event-body">
+      <h4>${ev.title}</h4>
+      <p>${ev.desc}</p>
+      <div class="place">📍 ${ev.place}</div>
+      ${typeBadge(ev.type)}
+    </div>`;
+  grid.appendChild(card);
+});
+const toggleBtn = document.getElementById("toggle-events");
+toggleBtn.onclick = () => {
+  const collapsed = grid.classList.toggle("collapsed");
+  toggleBtn.textContent = collapsed ? "Показать все события" : "Свернуть";
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- Итоги: карточки прошедших мероприятий --- */
+const resultsGrid = document.getElementById("results-grid");
+[...RESULTS].sort((a, b) => b.date.localeCompare(a.date)).forEach(r => {
+  const [y, m, d] = r.date.split("-").map(Number);
+  const card = document.createElement("div");
+  card.className = "event-card";
+  card.innerHTML = `
+    <div class="event-img" style="background:${r.bg}">
+      <div class="done-badge">Проведено</div>
+      <div class="date-badge"><b>${d}</b><span>${MONTHS[m-1]} ${y}</span></div>
+    </div>
+    <div class="event-body">
+      <h4>${r.title}</h4>
+      <p><b style="color:var(--gold)">Итоги:</b> ${r.result}</p>
+      <div class="place">📍 ${r.place}</div>
+    </div>`;
+  resultsGrid.appendChild(card);
+});
+
+/* --- Календарь (квадратный) + боковая колонка событий --- */
+const DOW = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+const upcomingTitle = document.getElementById("upcoming-title");
+const upcomingList = document.getElementById("upcoming-list");
+
+function renderUpcoming(evs, heading) {
+  upcomingTitle.textContent = heading;
+  upcomingList.innerHTML = "";
+  if (!evs.length) {
+    upcomingList.innerHTML = `<div class="up-empty">В этот день событий нет.</div>`;
+    return;
+  }
+  [...evs].sort((a, b) => a.date.localeCompare(b.date)).forEach(e => {
+    const [y, m, d] = e.date.split("-").map(Number);
+    const t = EVENT_TYPES[e.type] || EVENT_TYPES.event;
+    const item = document.createElement("div");
+    item.className = "up-item";
+    item.innerHTML = `
+      <div class="up-type"><span class="up-dot" style="background:${t.border}"></span>${t.label}</div>
+      <button class="up-title" aria-expanded="false">
+        <span>${d} ${MONTHS[m-1]} · ${e.title}</span>
+        <span class="up-chev">▾</span>
+      </button>
+      <p class="up-desc">${e.desc}</p>
+      <p class="up-long">${e.long || e.desc}</p>`;
+    const btn = item.querySelector(".up-title");
+    btn.onclick = () => {
+      const open = item.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open);
+      btn.title = open ? "Свернуть" : "Подробнее";
+    };
+    upcomingList.appendChild(item);
+  });
+}
+
+let calDate = new Date();
+function renderCalendar() {
+  const y = calDate.getFullYear(), m = calDate.getMonth();
+  document.getElementById("cal-title").textContent =
+    calDate.toLocaleDateString("ru-RU", { month: "long", year: "numeric" });
+  const g = document.getElementById("cal-grid");
+  g.innerHTML = DOW.map(d => `<div class="dow">${d}</div>`).join("");
+  const first = new Date(y, m, 1);
+  const offset = (first.getDay() + 6) % 7;
+  for (let i = 0; i < offset; i++) g.appendChild(Object.assign(document.createElement("div"), { className: "day empty" }));
+  const days = new Date(y, m + 1, 0).getDate();
+  const today = new Date();
+  for (let d = 1; d <= days; d++) {
+    const cell = document.createElement("div");
+    cell.className = "day";
+    const key = `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const evs = EVENTS.filter(e => e.date === key);
+
+    let dotsHtml = "";
+    if (evs.length) {
+      cell.classList.add("has-event");
+      dotsHtml = `<div class="day-dots">` +
+        evs.slice(0, 3).map(e => {
+          const t = EVENT_TYPES[e.type] || EVENT_TYPES.event;
+          return `<span class="day-dot" style="color:${t.border}" title="${t.label}: ${e.title}">${t.svg.replace(/width="14"/g, 'width="16"').replace(/height="14"/g, 'height="16"')}</span>`;
+        }).join("") + `</div>`;
+      cell.onclick = () => {
+        const wasSelected = cell.classList.contains("selected");
+        document.querySelectorAll(".day.selected").forEach(el => el.classList.remove("selected"));
+        if (wasSelected) {
+          renderUpcoming(EVENTS, "Ближайшие события");
+        } else {
+          cell.classList.add("selected");
+          renderUpcoming(evs, `События · ${d} ${MONTHS[m-1]}`);
+        }
+      };
+    }
+
+    cell.innerHTML = `<span class="day-num">${d}</span>${dotsHtml}`;
+    if (y === today.getFullYear() && m === today.getMonth() && d === today.getDate()) cell.classList.add("today");
+    g.appendChild(cell);
+  }
+}
+document.getElementById("cal-prev").onclick = () => {
+  calDate.setMonth(calDate.getMonth() - 1);
+  renderCalendar();
+  renderUpcoming(EVENTS, "Ближайшие события");
+};
+document.getElementById("cal-next").onclick = () => {
+  calDate.setMonth(calDate.getMonth() + 1);
+  renderCalendar();
+  renderUpcoming(EVENTS, "Ближайшие события");
+};
+renderCalendar();
+renderUpcoming(EVENTS, "Ближайшие события");
+
+/* --- Состав + всплывающее окно контактов --- */
+function renderTeamGrid(containerId, members) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "";
+  if (members.length === 0) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:14px;padding:10px 0">Пока нет данных. Добавьте участников в коде сайта.</p>';
+    return;
+  }
+  members.forEach(mb => {
+    const initials = mb.name.split(" ").map(w => w[0]).join("");
+    const card = document.createElement("div");
+    card.className = "member-card";
+    card.innerHTML = `
+      <div class="member-photo" style="background:${mb.bg}">
+        ${mb.photo ? `<img src="${mb.photo}" alt="${mb.name}" style="width:100%;height:100%;object-fit:cover">` : initials}
+      </div>
+      <div class="member-info">
+        <h4>${mb.name}</h4>
+        <div class="role">${mb.role}</div>
+        <div class="grp">${mb.group}</div>
+      </div>`;
+    card.onclick = () => openMemberModal(mb);
+    container.appendChild(card);
+  });
+}
+
+const overlay = document.getElementById("member-overlay");
+renderTeamGrid("team-leaders", LEADERS);
+renderTeamGrid("team-members", MEMBERS_ALL);
+renderTeamGrid("team-admins", ADMINS);
+function openMemberModal(mb) {
+  const initials = mb.name.split(" ").map(w => w[0]).join("");
+  document.getElementById("m-photo").style.background = mb.bg;
+  document.getElementById("m-photo").innerHTML =
+    mb.photo ? `<img src="${mb.photo}" alt="${mb.name}" style="width:100%;height:100%;object-fit:cover">` : initials;
+  document.getElementById("m-name").textContent = mb.name;
+  document.getElementById("m-role").textContent = mb.role + " · " + mb.group;
+  const c = mb.contacts || {};
+  const rows = [];
+  if (c.email) rows.push(`<a class="contact-row" href="mailto:${c.email}"><div class="c-icon">✉️</div><div><div class="c-label">Почта</div><div class="c-value">${c.email}</div></div></a>`);
+  if (c.phone) rows.push(`<a class="contact-row" href="tel:${c.phone.replace(/[^+\d]/g,"")}"><div class="c-icon">📞</div><div><div class="c-label">Телефон</div><div class="c-value">${c.phone}</div></div></a>`);
+  if (c.tg)    rows.push(`<a class="contact-row" href="https://t.me/${c.tg.replace("@","")}" target="_blank" rel="noopener"><div class="c-icon">✈️</div><div><div class="c-label">Telegram</div><div class="c-value">@${c.tg.replace("@","")}</div></div></a>`);
+  document.getElementById("m-contacts").innerHTML = rows.join("") || `<div class="contact-row"><div class="c-value">Контакты появятся позже</div></div>`;
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeMemberModal() {
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+document.getElementById("member-close").onclick = closeMemberModal;
+overlay.onclick = e => { if (e.target === overlay) closeMemberModal(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeMemberModal(); });
+
+/* --- Документы: аккордеон --- */
+const docList = document.getElementById("doc-list");
+DOCUMENTS.forEach((doc, i) => {
+  const item = document.createElement("div");
+  item.className = "doc-acc-item";
+  item.innerHTML = `
+    <button class="doc-acc-head" aria-expanded="false">
+      <span class="doc-num">${String(i + 1).padStart(2, "0")}</span>
+      <span class="doc-name">${doc.title}</span>
+      <span class="doc-date">${doc.updated} <span class="doc-sign">+</span></span>
+    </button>
+    <div class="doc-acc-body">
+      <div class="doc-acc-inner">
+        <p>${doc.desc}</p>
+        <a class="doc-open" href="${doc.file}" target="_blank" rel="noopener">Открыть документ</a>
+      </div>
+    </div>`;
+
+  const head = item.querySelector(".doc-acc-head");
+  const body = item.querySelector(".doc-acc-body");
+  head.onclick = () => {
+    const isOpen = item.classList.contains("open");
+    // закрываем остальные — аккордеон раскрывается по одному пункту
+    document.querySelectorAll(".doc-acc-item.open").forEach(el => {
+      el.classList.remove("open");
+      el.querySelector(".doc-acc-body").style.maxHeight = null;
+      el.querySelector(".doc-acc-head").setAttribute("aria-expanded", "false");
+    });
+    if (!isOpen) {
+      item.classList.add("open");
+      body.style.maxHeight = body.scrollHeight + "px";
+      head.setAttribute("aria-expanded", "true");
+    }
+  };
+  docList.appendChild(item);
+});
+
+</script>
+</body>
+</html>
