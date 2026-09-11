@@ -265,6 +265,45 @@
   }
   .member-modal .close-x:hover{background:var(--gold);color:var(--blue2)}
 
+  /* ===== ОКНО ИТОГОВ МЕРОПРИЯТИЙ ===== */
+  .result-overlay{
+    position:fixed;inset:0;background:rgba(10,20,32,.6);backdrop-filter:blur(3px);
+    z-index:210;display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .result-overlay.open{display:flex}
+  .result-modal{
+    background:#fff;border-radius:20px;max-width:720px;width:100%;max-height:calc(100vh - 40px);
+    overflow:hidden;display:flex;flex-direction:column;position:relative;
+    box-shadow:0 30px 70px rgba(0,0,0,.35);
+    animation:popIn .28s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .result-modal .r-photo{
+    flex:0 0 280px;min-height:200px;background-size:cover;background-position:center;position:relative;
+  }
+  .result-modal .r-photo .date-badge{
+    position:absolute;bottom:14px;left:14px;background:rgba(255,255,255,.95);
+    border-radius:10px;padding:7px 14px;text-align:center;line-height:1.1;
+    box-shadow:0 4px 12px rgba(0,0,0,.2);
+  }
+  .result-modal .r-photo .date-badge b{display:block;font-size:22px;color:var(--blue)}
+  .result-modal .r-photo .date-badge span{font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .result-modal .r-body{padding:24px 28px 28px;overflow-y:auto}
+  .result-modal .r-body h4{font-size:22px;color:var(--blue);margin-bottom:6px}
+  .result-modal .r-desc{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+  .result-modal .r-result{font-size:15px;color:var(--text);line-height:1.65;margin-bottom:14px}
+  .result-modal .r-place{font-size:14px;color:var(--gold);font-weight:700}
+  .result-modal .close-x{
+    position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;z-index:2;
+    border:none;background:rgba(255,255,255,.92);color:var(--muted);font-size:18px;line-height:1;
+    box-shadow:0 4px 12px rgba(0,0,0,.25);
+  }
+  .result-modal .close-x:hover{background:var(--gold);color:var(--blue2)}
+  @media (max-width:700px){
+    .result-overlay{padding:0}
+    .result-modal{max-width:none;max-height:none;height:100vh;height:100dvh;border-radius:0}
+    .result-modal .r-photo{flex:0 0 240px}
+  }
+
   /* ===== ПОЛОЖЕНИЯ: АККОРДЕОН ДОКУМЕНТОВ ===== */
   .doc-acc{max-width:920px;margin:0 auto;display:flex;flex-direction:column}
   .doc-acc-item{border-bottom:1px solid #e6e1d3}
@@ -322,6 +361,8 @@
     transition:border-color .2s,box-shadow .2s;
   }
   .results-search input[type="date"]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,169,78,.2)}
+  /* Карточки итогов — кликабельные */
+  #results-grid .event-card{cursor:pointer}
   .results-empty{
     grid-column:1/-1;text-align:center;color:var(--muted);
     font-size:15px;padding:40px 0;line-height:1.6;
@@ -418,7 +459,10 @@
   .section-head h3 { font-size: 20px !important; }
   .section-head h3::before { width: 4px !important; height: 20px !important; }
 
-  .event-img { height: 140px !important; }
+  .event-img { height: 105px !important; }
+  .event-img .date-badge { padding: 3px 8px !important; bottom: 8px !important; left: 8px !important; }
+  .event-img .date-badge b { font-size: 14px !important; }
+  .event-img .date-badge span { font-size: 9px !important; }
   .event-body { padding: 12px 14px 14px !important; gap: 6px !important; }
   .event-body h4 { font-size: 15px !important; }
   .event-body p { font-size: 12.5px !important; }
@@ -453,6 +497,7 @@
 /* Мобильная оптимизация!! */
 
 </style>
+<base target="_blank">
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
@@ -574,6 +619,20 @@
   </div>
 </div>
 
+<!-- ======= ОКНО ИТОГОВ МЕРОПРИЯТИЯ ======= -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-modal" role="dialog" aria-modal="true">
+    <button class="close-x" id="result-close" aria-label="Закрыть">✕</button>
+    <div class="r-photo" id="r-photo"></div>
+    <div class="r-body">
+      <h4 id="r-title"></h4>
+      <p class="r-desc" id="r-desc"></p>
+      <p class="r-result" id="r-result"></p>
+      <div class="r-place" id="r-place"></div>
+    </div>
+  </div>
+</div>
+
 <footer>© Совет Самоуправления Старост · сайт создан для информирования студентов</footer>
 
 <script>
@@ -651,7 +710,7 @@ const RESULTS = [
   {
     title: "Фотовыставка [884 Гомель]",
     desc: "Выставка приурочена к 884-летию Гомеля! Студенты поделились своими снимками самых красивых и живописных мест Гомеля.",
-    result: "Ученики с интересом побывали на выставке и посмотрели все фотографии. Многим понравилось творчество своих одногруппников. Впечателние были положительные",
+    result: "Ученики с интересом побывали на выставке и посмотрели все фотографии. Многим понравилось творчество своих одногруппников. После этого Администрация колледжа провела отбор фотографий, которые отправятся на выставку.",
     date: "2026-09-11", place: "Холл Колледжа",
     bg: 'url("img/events/1.webp") center/cover' /*Сюда картинку*/
   }
@@ -866,10 +925,9 @@ function renderResults(filterDate) {
       </div>
       <div class="event-body">
         <h4>${r.title}</h4>
-        ${r.desc ? `<p style="color:var(--muted);font-size:13px;margin-bottom:6px">${r.desc}</p>` : ""}
-        <p>${r.result}</p>
         <div class="place">📍 ${r.place}</div>
       </div>`;
+    card.onclick = () => openResultModal(r);
     resultsGrid.appendChild(card);
   });
 }
@@ -883,6 +941,29 @@ resultsDateInput.addEventListener("keydown", e => {
   if (e.key === "Enter") renderResults(resultsDateInput.value);
 });
 renderResults("");
+
+/* --- Окно итогов мероприятия --- */
+const resultOverlay = document.getElementById("result-overlay");
+function openResultModal(r) {
+  const [y, m, d] = r.date.split("-").map(Number);
+  document.getElementById("r-photo").style.background = r.bg;
+  document.getElementById("r-photo").innerHTML =
+    `<div class="date-badge"><b>${d}</b><span>${MONTHS_CAP[m-1]} ${y}</span></div>`;
+  document.getElementById("r-title").textContent = r.title;
+  document.getElementById("r-desc").textContent = r.desc || "";
+  document.getElementById("r-desc").style.display = r.desc ? "" : "none";
+  document.getElementById("r-result").textContent = r.result || "";
+  document.getElementById("r-place").textContent = "📍 " + r.place;
+  resultOverlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeResultModal() {
+  resultOverlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+document.getElementById("result-close").onclick = closeResultModal;
+resultOverlay.onclick = e => { if (e.target === resultOverlay) closeResultModal(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeResultModal(); });
 
 /* --- Календарь (квадратный) + боковая колонка событий --- */
 const DOW = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
