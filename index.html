@@ -6,6 +6,10 @@
 <title>Совет Ученического Самоуправления</title>
 <style>
 
+.event-body p, .up-desc, .up-long, .r-desc, .r-result {
+  white-space: pre-line;
+}
+
   :root{
     --blue:#16324f; --blue2:#0f2338; --gold:#d4a94e; --gold2:#f0d9a8;
     --bg:#f4f6f9; --card:#ffffff; --text:#1d2733; --muted:#5b6b7c;
@@ -514,6 +518,7 @@
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -659,6 +664,10 @@ const PAGES = [
   { id: "charter",  title: "Положения" },
 ];
 
+
+
+
+
 /* ---------- ТИПЫ МЕРОПРИЯТИЙ (SVG можно менять ниже) ---------- */
 const EVENT_TYPES = {
   meeting:  {
@@ -668,16 +677,26 @@ const EVENT_TYPES = {
     color: "#2a5a86", bg: "#e8f0f8", border: "#2a5a86"
   },
   event:    {
-    label: "Мероприятие",
-    svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M14.53 1.45L13.45 2.53L15.05 4.13C15.27 4.38 15.38 4.67 15.38 5S15.27 5.64 15.05 5.86L11.5 9.47L12.5 10.55L16.13 6.94C16.66 6.35 16.92 5.7 16.92 5C16.92 4.3 16.66 3.64 16.13 3.05L14.53 1.45M10.55 3.47L9.47 4.55L10.08 5.11C10.3 5.33 10.41 5.63 10.41 6S10.3 6.67 10.08 6.89L9.47 7.45L10.55 8.53L11.11 7.92C11.64 7.33 11.91 6.69 11.91 6C11.91 5.28 11.64 4.63 11.11 4.03L10.55 3.47M21 5.06C20.31 5.06 19.67 5.33 19.08 5.86L13.45 11.5L14.53 12.5L20.11 6.94C20.36 6.69 20.66 6.56 21 6.56S21.64 6.69 21.89 6.94L22.5 7.55L23.53 6.47L22.97 5.86C22.38 5.33 21.72 5.06 21 5.06M7 8L2 22L16 17L7 8M19 11.06C18.3 11.06 17.66 11.33 17.06 11.86L15.47 13.45L16.55 14.53L18.14 12.94C18.39 12.69 18.67 12.56 19 12.56C19.33 12.56 19.63 12.69 19.88 12.94L21.5 14.53L22.55 13.5L20.95 11.86C20.36 11.33 19.7 11.06 19 11.06Z"/></svg>',
-    color: "#b8860b", bg: "#fdf3dd", border: "#d4a94e"
+    label: "Праздник",
+    svg: '<svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor"><path d="M0 16q0.064 0.16 0.16 0.448t0.48 1.056 0.832 1.632 1.248 1.888 1.664 1.984 2.144 1.888 2.624 1.6 3.136 1.088 3.712 0.416 3.712-0.416 3.168-1.088 2.592-1.6 2.144-1.888 1.664-1.984 1.248-1.888 0.832-1.6 0.48-1.12l0.16-0.416q-0.032-0.16-0.16-0.416t-0.48-1.088-0.832-1.6-1.248-1.888-1.664-2.016-2.144-1.856-2.624-1.632-3.136-1.056-3.712-0.448-3.712 0.416-3.168 1.12-2.592 1.6-2.144 1.888-1.664 1.984-1.248 1.888-0.832 1.6-0.48 1.12zM8 16q0-3.296 2.336-5.632t5.664-2.368 5.664 2.368 2.336 5.632-2.336 5.664-5.664 2.336-5.664-2.336-2.336-5.664zM12 16q0 1.664 1.184 2.848t2.816 1.152 2.816-1.152 1.184-2.848-1.184-2.816-2.816-1.184q-0.032 0-0.096 0.032t-0.096 0q0.192 0.576 0.192 0.992 0 1.248-0.864 2.112t-2.144 0.864q-0.384 0-0.96-0.192 0 0.032-0.032 0.096t0 0.096z"/></svg>',
+    color: "#EE82EE ", bg: "#EE82EE", border: "#EE82EE  "
   },
   deadline: {
     label: "Дедлайн",
     svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M4 2V8H2V2H4M2 22V16H4V22H2M5 12C5 13.11 4.11 14 3 14C1.9 14 1 13.11 1 12C1 10.9 1.9 10 3 10C4.11 10 5 10.9 5 12M16 4C20.42 4 24 7.58 24 12C24 16.42 20.42 20 16 20C12.4 20 9.36 17.62 8.35 14.35L6 12L8.35 9.65C9.36 6.38 12.4 4 16 4M15 13L19.53 15.79L20.33 14.5L16.5 12.2V7H15V13Z"/></svg>',
     color: "#c4465e", bg: "#fde8ec", border: "#c4465e"
   },
+    activity: {
+    label: "Мероприятие",
+    svg: '<svg viewBox="5 2 25 25" width="16" height="16" fill="currentColor"><path d="M3.488 13.184l6.272 6.112-1.472 8.608 7.712-4.064 7.712 4.064-1.472-8.608 6.272-6.112-8.64-1.248-3.872-7.808-3.872 7.808z"/></svg>',
+    color: "#FFD700", bg: "#FFD700", border: "#FFD700"
+  },
 };
+
+
+
+
+
 
 /* 2) СЛАЙДЕР: bg — любой CSS-фон: url("img.jpg") center/cover или градиент */
 const SLIDES = [
@@ -701,27 +720,70 @@ const SLIDES = [
   }
 ];
 
+
+
+
+
 /* 3) СОБЫТИЯ (будущие). date "ГГГГ-ММ-ДД". long — подробности для окошка в календаре. */
 const EVENTS = [
- /* {
-    title: "Меж-Колледжный Созвон Телемост",
-    desc: "Онлайн-встреча с коллегами из других колледжей.",
-    long: "В формате живого диалога мы поделимся лучшими практиками, узнаем о студенческих традициях и культурных обычаях друг друга.",
+  {
+    title: "Фотовыставка [884 Гомель]",
+    desc: "Выставка приуроченая к 884-летию Гомеля!",
+    long: "Учащиеся групп покажут фотографии города Гомель, чтобы показать его красоту через повседневную жизнь, живописные виды.",
+    date: "2026-09-11", place: "Холл Колледжа",
+    bg: 'url("img/place-holders/1.webp") center/cover',
+    type: "activity"
+  },
+
+    {
+    title: "Беларусь: Вчера, Сегодня, Завтра",
+    desc: "Областной Брейн-Батл среди учащихся учреждений, приуроченный к 884-летию Гомеля.",
+    long: "Команда отобранная для участия от имени нашего Колледжа будет учавствовать в битве умов, среди других команд.",
     date: "2026-09-16", place: " - ",
     bg: 'url("img/place-holders/1.webp") center/cover',
-    type: "meeting"
-  }*/
+    type: "activity"
+  },
+
+    {
+    title: "День Здоровья: Спорт - Единство",
+    desc: "Пройдёт День здоровья, приуроченный ко Дню Народного Единства.",
+    long: `Все группы должны будут организовать команда для участия на Дне здоровья.
+    Для участия необходимо: 
+    • Название команды;
+    • Логотип команды, распечатанный;
+    • Девиз;
+    • Количество участников от 8 до 10 Человек.
+    
+    Желаем удачи, на предстоящем мероприятии, хорошего настроения и впечатлений! ❤️`,
+    date: "2026-09-18", place: "Спортивная Площадка",
+    bg: 'url("img/place-holders/1.webp") center/cover',
+    type: "event"
+  },
 
   {
     title: "Собрание Совета",
     desc: "Собрание Совета Ученического Самоуправления",
     long: "Старосты своих учебных групп и активисты колледжа соберутся на первое в текущем учебном году на собрание, где будут обговоренны нюансы Совета и будущие мероприятия.",
-    date: "2026-09-22", place: "Актовый Зал",
+    date: "2026-09-23", place: "Актовый Зал",
     bg: 'url("img/place-holders/1.webp") center/cover',
     type: "meeting"
+  },
+
+  {
+    title: "День Учителя",
+    desc: "Подготовка ко Дню Учителя",
+    long: `Все группы будут должны подготовить поздравления для преподавателей своего колледжа.\n
+    📄План того как будет оформляться работу появиться в ТГК Совета`,
+    date: "2026-10-05", place: " - ",
+    bg: 'url("img/place-holders/2.webp") center/cover',
+    type: "deadline"
   }
 
 ];
+
+
+
+
 
 /* 4) ИТОГИ прошедших мероприятий.
       bg — картинка: url("photos/itogi1.jpg") center/cover или градиент-заглушка.
@@ -745,7 +807,7 @@ const RESULTS = [
 
     {
     title: "День Здоровья",
-    desc: "День здоровья приуроченный ко Дню народного единства.",
+    desc: "День здоровья приуроченный ко Дню народного единства.",
     result: "Студенты собрались в команды по 10 человек. Им было предоставлено одинадцать станций, которые они должны были пройти: Велотрасса, Стрельба из Пневматики, Метание Гранаты, Подтягивание, Броски в кольцо, Эстафета 'Пол это Лава', Полоса препятствий на верёвках, Первая помощь, Большая скакалка, Переноска воды и Установка Палатки.",
     date: "2026-09-18", place: "Спорт Площадка",
     bg: 'url("img/events/2.webp") center/cover' /*Сюда картинку*/
@@ -906,7 +968,7 @@ function typeBadge(type) {
   return `<span class="event-type-badge" style="background:${t.bg};color:${t.color};border:1px solid ${t.border}">${t.svg} ${t.label}</span>`;
 }
 
-EVENTS.forEach(ev => {
+upcomingEvents().forEach(ev => {
   const [y, m, d] = ev.date.split("-").map(Number);
   const card = document.createElement("div");
   card.className = "event-card";
@@ -1013,6 +1075,13 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeResultM
 
 /* --- Календарь (квадратный) + боковая колонка событий --- */
 const DOW = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+/* Фильтр: только будущие и сегодняшние события */
+function upcomingEvents() {
+  const t = new Date();
+  const todayKey = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;
+  return EVENTS.filter(e => e.date >= todayKey);
+}
+
 const upcomingTitle = document.getElementById("upcoming-title");
 const upcomingList = document.getElementById("upcoming-list");
 
@@ -1020,7 +1089,7 @@ function renderUpcoming(evs, heading) {
   upcomingTitle.textContent = heading;
   upcomingList.innerHTML = "";
   if (!evs.length) {
-    upcomingList.innerHTML = `<div class="up-empty">В этот день событий нет.</div>`;
+    upcomingList.innerHTML = `<div class="up-empty">Ближайших событий нет. Загляните позже!</div>`;
     return;
   }
   [...evs].sort((a, b) => a.date.localeCompare(b.date)).forEach(e => {
@@ -1076,7 +1145,7 @@ function renderCalendar() {
         const wasSelected = cell.classList.contains("selected");
         document.querySelectorAll(".day.selected").forEach(el => el.classList.remove("selected"));
         if (wasSelected) {
-          renderUpcoming(EVENTS, "Ближайшие события");
+          renderUpcoming(upcomingEvents(), "Ближайшие события");
         } else {
           cell.classList.add("selected");
           renderUpcoming(evs, `События · ${d} ${MONTHS[m]}`);
@@ -1092,15 +1161,15 @@ function renderCalendar() {
 document.getElementById("cal-prev").onclick = () => {
   calDate.setMonth(calDate.getMonth() - 1);
   renderCalendar();
-  renderUpcoming(EVENTS, "Ближайшие события");
+  renderUpcoming(upcomingEvents(), "Ближайшие события");
 };
 document.getElementById("cal-next").onclick = () => {
   calDate.setMonth(calDate.getMonth() + 1);
   renderCalendar();
-  renderUpcoming(EVENTS, "Ближайшие события");
+  renderUpcoming(upcomingEvents(), "Ближайшие события");
 };
 renderCalendar();
-renderUpcoming(EVENTS, "Ближайшие события");
+renderUpcoming(upcomingEvents(), "Ближайшие события");
 
 /* --- Состав + всплывающее окно контактов --- */
 function renderTeamGrid(containerId, members) {
