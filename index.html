@@ -221,6 +221,20 @@
 
   /* ===== СОСТАВ ===== */
   .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:24px}
+
+  /* ===== КАРУСЕЛЬ: СТАРОСТЫ / АКТИВЫ КОЛЛЕДЖА ===== */
+  .team-carousel{margin-bottom:44px}
+  .team-carousel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;padding:0 2px}
+  .team-carousel-head .sub-title{margin-bottom:0;border-left:none;padding-left:0;flex:1;text-align:center;font-size:20px;color:var(--blue);font-weight:700}
+  .team-carousel-btn{
+    width:40px;height:40px;flex:0 0 40px;border-radius:10px;background:#fff;color:var(--blue);
+    border:1px solid #e2ddd0;font-size:20px;line-height:1;
+    transition:border-color .2s,color .2s;
+  }
+  .team-carousel-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .team-carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:20px}
+  .team-carousel-dots button{width:10px;height:10px;border-radius:50%;border:none;background:#d7dde5;transition:.2s;padding:0}
+  .team-carousel-dots button.on{background:var(--gold);width:26px;border-radius:6px}
   .team-subsection{margin-bottom:44px}
   .team-subsection:last-child{margin-bottom:0}
   .sub-title{font-size:20px;color:var(--blue);margin-bottom:18px;padding-left:14px;border-left:5px solid var(--gold);font-weight:700}
@@ -530,6 +544,7 @@
 </style>
 
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -594,14 +609,19 @@
       <div class="team-grid" id="team-leaders"></div>
     </div>
 
-    <div class="team-subsection">
-      <h4 class="sub-title">Старосты</h4>
-      <div class="team-grid" id="team-members"></div>
-    </div>
-
-    <div class="team-subsection">
-      <h4 class="sub-title">Активы Колледжа</h4>
-      <div class="team-grid" id="team-actives"></div>
+    <div class="team-carousel">
+      <div class="team-carousel-head">
+        <button class="team-carousel-btn" id="team-prev" aria-label="Назад">&#8249;</button>
+        <h4 class="sub-title" id="team-carousel-title">Старосты</h4>
+        <button class="team-carousel-btn" id="team-next" aria-label="Вперёд">&#8250;</button>
+      </div>
+      <div class="team-subsection">
+        <div class="team-grid" id="team-members"></div>
+      </div>
+      <div class="team-subsection" style="display:none">
+        <div class="team-grid" id="team-actives"></div>
+      </div>
+      <div class="team-carousel-dots" id="team-carousel-dots"></div>
     </div>
 
     <div class="team-subsection">
@@ -804,15 +824,23 @@ const EVENTS = [
   },
 
     {
-    title: "Первокурсник",
-    desc: "Мини-конкурс для первых курсов колледжа",
-    long: `На сцену выйдут первые курсы, чтобы показать свою группу.
-    Конкурс пройдёт в рамках небольшого состязание между группами:
-    • <Чуть позже тут будут номинации>
+    title: "Первокурсник: «Время ПЕРВЫХ!»",
+    desc: "Конкурс для первокурсников - Ниже подробности:",
+    long: `На сцену выйдут первые курсы, чтобы показать свою группу. Конкурс пройдёт в рамках небольшого состязание между группами:
+    
+    Номинации:
+    1. «Золотой голос» за лучшее вокальное исполнение
+    2. «Художественное слово» за лучшее ораторское исполнение
+    3. «Я в образе» за лучший сценический образ
+    4. «Во власти танца» за лучшее хореографическое исполнение
+    5. «Свой взгляд» за лучший видеоролик
 
-    Подробности:
-    • Тематика: Любая;
-    • Продолжительность: до ~15 минут;`,
+    Программа:
+    • Тематика: "Время ПЕРВЫХ!";
+    • Продолжительность: до 15 минут;
+
+    — Проводить репетиции вы можете в актовом зале. Заранее обсуждайте график репетиций, ключ от актового зала может просить только Куратор вашей группы или другой преподаватель под роспись.
+    ㅤ📋Положение о Конкурсе: [Смотреть](docs/Положение-о-конкурс-Первокурсник26.pdf)`,
     date: "2026-10-19", place: "Актовый Зал",
     bg: 'url("img/place-holders/3.webp") center/cover',
     type: "event"
@@ -867,7 +895,7 @@ const RESULTS = [
 const LEADERS = [
   { name: "Быркова Арина", role: "Председатель Совета", group: "ТМ-44", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "img/avatars/byrkova.webp",
     contacts: { email: " - ", phone: "[ ]", tg: "arixzweq18" } },
-    { name: "Тихиня Егор", role: "Заместитель Председателя<br> Совета Старост", group: "ТМ-44", bg: "linear-gradient(135deg,#1d5c4a,#3aa08a)", photo: "",
+    { name: "Тихиня Егор", role: "Заместитель Председателя", group: "ТМ-44", bg: "linear-gradient(135deg,#1d5c4a,#3aa08a)", photo: "",
     contacts: { email: " - ", phone: " - ", tg: " - " } },
     { name: "Железко Егор", role: "Секретарь Совета", group: "ТМ-44", bg: "linear-gradient(135deg,#1d5c4a,#3aa08a)", photo: "img/avatars/jelezko.webp",
     contacts: { email: " - ", phone: "[ ]", tg: "Egor_17nerial" } },
@@ -875,8 +903,82 @@ const LEADERS = [
 
 /* Участники — все старосты */
 const MEMBERS_ALL = [
-  /* { name: "Кубай Глеб Юрьевич", role: "Глав. Администратор", group: "МО-34", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "img/avatars/kybai.webp",
-    contacts: { email: "admin@example.ru", phone: "+7 (900) 000-00-00", tg: "admin_sss" } }, */
+    { name: "Миронович В.", role: "Староста", group: "ТТ-12", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Будаев М.", role: "Зам. Старосты", group: "ТТ-12", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Азбука Д.", role: "Староста", group: "ЭМ-12", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Грил Н.", role: "Староста", group: "ТЭ-21", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Пушкорел М.", role: "Зам. Староста", group: "ТЭ-21", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Захарченко М.", role: "Староста", group: "ТМ-24", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Рочио Е.", role: "Зам. Староста", group: "ТМ-24", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Семашко М.", role: "Староста", group: "ТЭ-11", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Ковалев С.", role: "Зам. Староста", group: "ТЭ-11", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Горошко Н.", role: "Староста", group: "Т-33", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Ковалев В.", role: "Зам. Староста", group: "Т-33", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Соченок А.", role: "Староста", group: "ЭС-32", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Глотов А.", role: "Зам. Староста", group: "ЭС-32", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Тихиня Е.", role: "Староста", group: "Т-43", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Лемещенко И.", role: "Зам. Староста", group: "Т-43", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Лисицкий Е.", role: "Староста", group: "МО-34", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Гребенчук А.", role: "Зам. Староста", group: "МО-34", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Пименова Я.", role: "Староста", group: "ОС-24", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Вербило А.", role: "Староста", group: "ЭС-33", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Шкробот А.", role: "Зам. Староста", group: "ЭС-33", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Коломот Ф.", role: "Староста", group: "ЭС-10", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Санега А.", role: "Зам. Староста", group: "ЭС-10", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Комзолов М.", role: "Староста", group: "ТМ-34", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Матвиенко Д.", role: "Зам. Староста", group: "ТМ-34", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Старовойтов", role: "Староста", group: "СК-13", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Сокольчок", role: "Зам. Староста", group: "СК-13", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Кравцов А.", role: "Староста", group: "ЭМ-11", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Сечко В.", role: "Зам. Староста", group: "ЭМ-11", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
+    { name: "Быркова А.", role: "Староста", group: "ТМ-44", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+    { name: "Железко Е.", role: "Зам. Староста", group: "ТМ-44", bg: "linear-gradient(135deg,#16324f,#2a5a86)", photo: "",
+    contacts: { email: " - ", phone: " - ", tg: " - " } },
+
 ];
 
 const ACTIVES = [
@@ -1096,10 +1198,10 @@ function openResultModal(r) {
   document.getElementById("r-photo").innerHTML =
     `<div class="date-badge"><b>${d}</b><span>${MONTHS_CAP[m-1]} ${y}</span></div>`;
   document.getElementById("r-title").textContent = r.title;
-  document.getElementById("r-desc").textContent = r.desc || "";
+  document.getElementById("r-desc").innerHTML = linkify(r.desc || "");
   document.getElementById("r-desc").style.display = r.desc ? "" : "none";
   const resEl = document.getElementById("r-result");
-  resEl.textContent = r.result || "";
+  resEl.innerHTML = linkify(r.result || "");
   resEl.style.display = r.result ? "" : "none";
   document.getElementById("r-place").textContent = "📍 " + r.place;
   resultOverlay.classList.add("open");
@@ -1120,6 +1222,12 @@ function upcomingEvents() {
   const t = new Date();
   const todayKey = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;
   return EVENTS.filter(e => e.date >= todayKey);
+}
+
+/* Превращает [текст](путь) в кликабельную ссылку */
+function linkify(text) {
+  return String(text).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener" style="color:var(--gold);font-weight:600;text-decoration:underline">$1</a>');
 }
 
 const upcomingTitle = document.getElementById("upcoming-title");
@@ -1143,8 +1251,8 @@ function renderUpcoming(evs, heading) {
         <span>${d} ${MONTHS[m-1]} · ${e.title}</span>
         <span class="up-chev">▾</span>
       </button>
-      <p class="up-desc">${e.desc}</p>
-      <p class="up-long">${e.long || e.desc}</p>`;
+      <p class="up-desc">${linkify(e.desc)}</p>
+      <p class="up-long">${linkify(e.long || e.desc)}</p>`;
     const btn = item.querySelector(".up-title");
     btn.onclick = () => {
       const open = item.classList.toggle("open");
@@ -1243,6 +1351,34 @@ renderTeamGrid("team-leaders", LEADERS);
 renderTeamGrid("team-members", MEMBERS_ALL);
 renderTeamGrid("team-actives", ACTIVES);
 renderTeamGrid("team-admins", ADMINS);
+
+/* --- Состав: переключение «Старосты» / «Активы Колледжа» стрелками --- */
+const TEAM_SLIDES = [
+  { title: "Старосты",          gridId: "team-members" },
+  { title: "Активы Колледжа",   gridId: "team-actives" },
+];
+let teamSlide = 0;
+const teamTitleEl  = document.getElementById("team-carousel-title");
+const teamDotsBox  = document.getElementById("team-carousel-dots");
+TEAM_SLIDES.forEach((s, i) => {
+  const b = document.createElement("button");
+  b.setAttribute("aria-label", s.title);
+  b.title = s.title;
+  b.onclick = () => showTeamSlide(i);
+  teamDotsBox.appendChild(b);
+});
+function showTeamSlide(i) {
+  teamSlide = (i + TEAM_SLIDES.length) % TEAM_SLIDES.length;
+  TEAM_SLIDES.forEach((s, k) => {
+    const sub = document.getElementById(s.gridId).closest(".team-subsection");
+    sub.style.display = k === teamSlide ? "" : "none";
+  });
+  teamTitleEl.textContent = TEAM_SLIDES[teamSlide].title;
+  [...teamDotsBox.children].forEach((d, k) => d.classList.toggle("on", k === teamSlide));
+}
+document.getElementById("team-prev").onclick = () => showTeamSlide(teamSlide - 1);
+document.getElementById("team-next").onclick = () => showTeamSlide(teamSlide + 1);
+showTeamSlide(0);
 function openMemberModal(mb) {
   const initials = mb.name.split(" ").map(w => w[0]).join("");
   document.getElementById("m-photo").style.background = mb.bg;
